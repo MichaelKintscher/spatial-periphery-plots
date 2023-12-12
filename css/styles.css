@@ -1,0 +1,25 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    background-color: black;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+#control-map {
+    width: 1000px;
+    height: 1000px;
+    margin-left: 50;
+}
+
+#right-corner {
+      position: absolute;
+      top: 100px;
+      right: 100px;
+    }
+  
