@@ -10,28 +10,38 @@
                 left: 50%;
                 transform: translate(-50%, -50%);
             }
-            /* Step 2 */
+            
             #countries{
                 width : 100%;
             }
+
+            #mini-chart-container{
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                width: 300px;
+                height: 250px;
+                border: 1px solid #ccc;
+                background-color: #fff;
+                cursor: move;
+                z-index: 9999;
+            }
+            
         </style>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" />
         <script src="https://d3js.org/d3.v7.min.js"></script>
         <script src="js/main.js"></script>
     </head>
     <body>
-        <div class="container">
+        <div class="Chart">
             <h1 class="text-center">Homework #1: D3 Simple</h1>
 
             <!-- Step 0 -->
             <h3 class="text-center">Periphery Plot</h3>
             
-
-            <div id="myDataVis">
-                <!-- Step 1 -->
-                <svg id="scatterPlot" style="height: 600px; width: 1000px;">
-                </svg>
-                </svg>
+            <div id="mini-chart-container">
+            <div id="myDataVis"></div>
+                
             </div>
         </div><!-- This is the end of the "container" div -->
 
