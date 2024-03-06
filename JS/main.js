@@ -35,18 +35,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
  function miniMapPlotter(){
     // set the dimensions and margins of the graph
-    var margin = {top: 10, right: 30, bottom: 30, left: 60},
-        width = 300 - margin.left - margin.right,
-        height = 250 - margin.top - margin.bottom;
+    // var margin = {top: 10, right: 30, bottom: 30, left: 60},
+    //     width = 300 - margin.left - margin.right,
+    //     height = 250 - margin.top - margin.bottom;
     
     // append the svg object to the body of the page
-    var svg = d3.select("#myDataVis")
-      .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-        .attr("transform",
-              "translate(" + margin.left + "," + margin.top + ")");
+    // create svg element:
+    var svg = d3.select("#myDataVis").append("svg").attr("width", 2000).attr("height", 2000)
+
+// Add the path using this helper function
+    svg.append('circle')
+    .attr('cx', 300)
+    .attr('cy', 300)
+    .attr('r', 150)
+    .attr('stroke', 'black')
+    .attr('fill', 'white');
+
+    // var svg = d3.select("#myDataVis")
+    //   .append("svg")
+    //     .attr("width", width + margin.left + margin.right)
+    //     .attr("height", height + margin.top + margin.bottom)
+    //   .append("g")
+    //     .attr("transform",
+    //           "translate(" + margin.left + "," + margin.top + ")");
     
     //Read the data
     d3.csv("../spatial-periphery-plots/consumption-co2-per-capita.csv").then(function(data) {
