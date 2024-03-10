@@ -28,36 +28,58 @@ document.addEventListener('DOMContentLoaded', function () {
             chartContainer.style.left = event.clientX - offset.x + "px";
             chartContainer.style.top = event.clientY - offset.y + "px";
         }
-    }
-         
+    }    
  });
 
+//this is the function to drag the detail view, it is not working at the moment and only drags when the mini map plotter is dragged
+ document.addEventListener('DOMContentLoaded', function () {
+
+    detailview()
+
+    // Make the chart draggable
+    const detailcontainer = document.getElementById("detail-view");
+    let dragging = false;
+    let off = { x: 0, y: 0 };
+
+    chartContainer.addEventListener("mousedown", startDrag);
+    chartContainer.addEventListener("mouseup", endDrag);
+    chartContainer.addEventListener("mousemove", drag);
+
+    function startDrag(event) {
+        dragging = true;
+        off.x = event.clientX - chartContainer.getBoundingClientRect().left;
+        off.y = event.clientY - chartContainer.getBoundingClientRect().top;
+    }
+
+    function endDrag() {
+        dragging = false;
+    }
+
+    function drag(event) {
+        if (dragging) {
+            chartContainer.style.left = event.clientX - off.x + "px";
+            chartContainer.style.top = event.clientY - off.y + "px";
+        }
+    }
+
+
+});
 
  function miniMapPlotter(){
     // set the dimensions and margins of the graph
-    // var margin = {top: 10, right: 30, bottom: 30, left: 60},
-    //     width = 300 - margin.left - margin.right,
-    //     height = 250 - margin.top - margin.bottom;
+    var margin = {top: 10, right: 30, bottom: 30, left: 60},
+        width = 1500 - margin.left - margin.right,
+        height = 600 - margin.top - margin.bottom;
     
-    // append the svg object to the body of the page
-    // create svg element:
-    var svg = d3.select("#myDataVis").append("svg").attr("width", 2000).attr("height", 2000)
 
-// Add the path using this helper function
-    svg.append('circle')
-    .attr('cx', 300)
-    .attr('cy', 300)
-    .attr('r', 150)
-    .attr('stroke', 'black')
-    .attr('fill', 'white');
+    var svg = d3.select("#myDataVis")
+      .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform",
+              "translate(" + margin.left + "," + margin.top + ")");
 
-    // var svg = d3.select("#myDataVis")
-    //   .append("svg")
-    //     .attr("width", width + margin.left + margin.right)
-    //     .attr("height", height + margin.top + margin.bottom)
-    //   .append("g")
-    //     .attr("transform",
-    //           "translate(" + margin.left + "," + margin.top + ")");
     
     //Read the data
     d3.csv("../spatial-periphery-plots/consumption-co2-per-capita.csv").then(function(data) {
@@ -107,6 +129,25 @@ document.addEventListener('DOMContentLoaded', function () {
         svg.append("g")
         .call(d3.axisLeft(yScale));
         }) 
+
+    
+ }
+//this is the funtion for the detail view
+ function detailview(){
+    // create svg element:
+    var svg = d3.select("#detail-view").append("svg").attr("width", 500).attr("height", 500)
+
+    // Add the path using this helper function
+    svg.append('circle')
+    .attr('cx', 250)
+    .attr('cy', 250)
+    .attr('r', 100)
+    .attr('stroke', 'black')
+    .attr('fill', 'transparent');
+
+//I cannot make the zoom function with out the data but this link:
+//https://www.d3indepth.com/zoom-and-pan/
+//should help make it, go to the last example and press "edit in codepen" as it will say how it got it to work
 
     
  }
