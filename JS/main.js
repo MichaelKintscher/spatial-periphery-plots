@@ -31,39 +31,39 @@ document.addEventListener('DOMContentLoaded', function () {
     }    
  });
 
-//this is the function to drag the detail view, it is not working at the moment and only drags when the mini map plotter is dragged
- document.addEventListener('DOMContentLoaded', function () {
+// //this is the function to drag the detail view, it is not working at the moment and only drags when the mini map plotter is dragged
+//  document.addEventListener('DOMContentLoaded', function () {
 
-    detailview()
+//     detailview()
 
-    // Make the chart draggable
-    const detailcontainer = document.getElementById("detail-view");
-    let dragging = false;
-    let off = { x: 0, y: 0 };
+//     // Make the chart draggable
+//     const detailcontainer = document.getElementById("detail-view");
+//     let dragging = false;
+//     let off = { x: 0, y: 0 };
 
-    chartContainer.addEventListener("mousedown", startDrag);
-    chartContainer.addEventListener("mouseup", endDrag);
-    chartContainer.addEventListener("mousemove", drag);
+//     chartContainer.addEventListener("mousedown", startDrag);
+//     chartContainer.addEventListener("mouseup", endDrag);
+//     chartContainer.addEventListener("mousemove", drag);
 
-    function startDrag(event) {
-        dragging = true;
-        off.x = event.clientX - chartContainer.getBoundingClientRect().left;
-        off.y = event.clientY - chartContainer.getBoundingClientRect().top;
-    }
+//     function startDrag(event) {
+//         dragging = true;
+//         off.x = event.clientX - chartContainer.getBoundingClientRect().left;
+//         off.y = event.clientY - chartContainer.getBoundingClientRect().top;
+//     }
 
-    function endDrag() {
-        dragging = false;
-    }
+//     function endDrag() {
+//         dragging = false;
+//     }
 
-    function drag(event) {
-        if (dragging) {
-            chartContainer.style.left = event.clientX - off.x + "px";
-            chartContainer.style.top = event.clientY - off.y + "px";
-        }
-    }
+//     function drag(event) {
+//         if (dragging) {
+//             chartContainer.style.left = event.clientX - off.x + "px";
+//             chartContainer.style.top = event.clientY - off.y + "px";
+//         }
+//     }
 
 
-});
+// });
 
  function miniMapPlotter(){
     // set the dimensions and margins of the graph
@@ -132,22 +132,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
     
  }
-//this is the funtion for the detail view
- function detailview(){
-    // create svg element:
-    var svg = d3.select("#detail-view").append("svg").attr("width", 500).attr("height", 500)
+// //this is the funtion for the detail view
+//  function detailview(){
+//     // create svg element:
+//     var svg = d3.select("#detail-view").append("svg").attr("width", 500).attr("height", 500)
 
-    // Add the path using this helper function
-    svg.append('circle')
-    .attr('cx', 250)
-    .attr('cy', 250)
-    .attr('r', 100)
-    .attr('stroke', 'black')
-    .attr('fill', 'transparent');
+//     // Add the path using this helper function
+//     svg.append('circle')
+//     .attr('cx', 250)
+//     .attr('cy', 250)
+//     .attr('r', 100)
+//     .attr('stroke', 'black')
+//     .attr('fill', 'transparent');
 
-//I cannot make the zoom function with out the data but this link:
-//https://www.d3indepth.com/zoom-and-pan/
-//should help make it, go to the last example and press "edit in codepen" as it will say how it got it to work
+// //I cannot make the zoom function with out the data but this link:
+// //https://www.d3indepth.com/zoom-and-pan/
+// //it should help make it, go to the last example and press "edit in codepen" as it will say how it got it to work
 
     
- }
+//  }
