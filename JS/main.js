@@ -68,8 +68,8 @@ document.addEventListener('DOMContentLoaded', function () {
  function miniMapPlotter(){
     // set the dimensions and margins of the graph
     var margin = {top: 10, right: 30, bottom: 30, left: 60},
-        width = 1500 - margin.left - margin.right,
-        height = 600 - margin.top - margin.bottom;
+        width = 400 - margin.left - margin.right,
+        height = 300 - margin.top - margin.bottom;
     
 
     var svg = d3.select("#myDataVis")
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     
     //Read the data
-    d3.csv("../spatial-periphery-plots/consumption-co2-per-capita.csv").then(function(data) {
+    d3.csv("consumption-co2-per-capita.csv").then(function(data) {
         
         const groups = ["Asia (excl. China and India)", "United States", "Europe", "India", "China"]
 
