@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang='en'>
     <head>
-        <title>Homework #1: D3 Simple - CSE 578 - Spring 2024</title>
+        <title>DV Project</title>
         <style>
             /* Center the #myDataVis div */
             #myDataVis {
@@ -15,13 +15,20 @@
                 width : 100%;
             }
 
-            #mini-chart-container{
+            #miniChartContainer{
                 position: fixed;
                 bottom: 20px;
                 right: 20px;
                 width: 400px;
                 height: 300px;
                 border: 1px solid #ccc;
+                background-color: #fff;
+                cursor: move;
+                z-index: 9999;
+            }
+
+            #detailView{
+                left: 50px;
                 background-color: #fff;
                 cursor: move;
                 z-index: 9999;
@@ -60,13 +67,23 @@
     </head>
     <body>
         <div class="Chart">
-            <h1 class="text-center">Homework #1: D3 Simple</h1>
+            <h1 class="text-center">DV Project</h1>
 
-            <!-- Step 0 -->
+
             <h3 class="text-center">Periphery Plot</h3>
+
+            <div id="detailView"></div> <!-- Detailed View -->
+
+            <button onclick="zoomIn(2)">Zoom in</button>
+            <button onclick="zoomIn(0.5)">Zoom out</button>
+            <button onclick="resetZoom()">Reset zoom</button>
+            <button onclick="pan(-50,0)">Pan left</button>
+            <button onclick="pan(50,0)">Pan right</button>
+            <button onclick="center()">Center</button>
             
-            <div id="mini-chart-container">
-            <div id="detail-view"></div>
+            <!-- Mini Map -->
+            <div id="miniChartContainer">
+            
             <div id="myDataVis"></div>
                 
             </div>
