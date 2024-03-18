@@ -1,6 +1,6 @@
 # spatial-periphery-plots
 # Introduction
-
+This tool is used to give a good view of a dataset and tell all of the details and the periphery plots of the data. Based on the paper _Peripery Plots for Contextualizing Heterongenous Time-Based Charts_ by Bryce Morrow, Trevor Manz, Arlene E. Chung, Nils Gehlenborg, and David Gotz, we are making a tool to give a good detail view on the datset showing a focus and context view. The focus view will show the details of the dataset and the context zone will show the periphery plots. With this tool we will have all the data we need on datasets.
 # Instructions
 Download the Mileston1 branch to do testing and see progress. Once that is done, make sure all files were downloaded and open up index.html to see the page.
 # Features
