@@ -1,0 +1,114 @@
+ /* Center the #myDataVis div */
+ #myDataVis {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#countries{
+    width : 100%;
+}
+
+#miniChartContainer{
+    position: absolute;
+    bottom: 20px;
+    width: 400px;
+    height: 300px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+}
+
+#detailView{
+    /* position: absolute; */
+    left: 50px;
+    background-color: #fff;
+    cursor: move;
+    z-index: 1;
+}
+
+#contextView{
+    position: absolute;
+    left: 50px;
+    background-color: #fff;
+    cursor: move;
+    z-index: 5;
+}
+
+
+#detail_svg{
+    position: absolute;
+    z-index: 1;
+}
+
+#context_svg{
+    position: absolute;
+    z-index: 2;
+}
+
+#interface
+{
+    background-color: #eee;
+    border: 2px solid #ccc;
+
+}
+
+html, body {
+    font-family: Arial, sans-serif;
+}
+
+.title {
+    font-size: 12px;
+}
+
+.canvas {
+    overflow: hidden;
+}
+
+.canvas .wrapper.outer > .background {
+    fill: #000000;
+}
+.canvas .wrapper.inner > .background {
+    fill: #CCCCCC;
+    cursor: move;
+}
+.canvas .background {
+    fill: #F6F6F6;
+    stroke: #333333;
+    cursor: move;
+}
+.canvas .panCanvas {
+    cursor: move;
+}
+
+.canvas .minimap .frame .background {
+    stroke: #111111;
+    stroke-width: 4px;
+    fill-opacity: 0.4;
+    fill: #000000;
+    fill: url(#minimapGradient_cwbjo);
+    filter: url(#minimapDropShadow_cwbjo);
+    cursor: move;
+}
+
+.forcecircle {
+    stroke: #111111;
+    fill: blue;
+}
+
+
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.node {
+  font: 10px sans-serif;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}

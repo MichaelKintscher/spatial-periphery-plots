@@ -3,91 +3,78 @@
     <head>
         <title>DV Project</title>
         <style>
-            /* Center the #myDataVis div */
-            #myDataVis {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-            }
-            
-            #countries{
-                width : 100%;
-            }
-
-            #miniChartContainer{
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                width: 400px;
-                height: 300px;
-                border: 1px solid #ccc;
-                background-color: #fff;
-                cursor: move;
-                z-index: 9999;
-            }
-
-            #detailView{
-                left: 50px;
-                background-color: #fff;
-                cursor: move;
-                z-index: 9999;
-            }
-
-
-        /*this is incomplete, I tried to make an svg for the detail view but it wouldn't work at the moment,
-        this is neeeded to add the buttons, so I would use this as a stepping stone, I got the button info from:
-        https://www.d3indepth.com/zoom-and-pan/  */
-           /* #detail-view{
-                width: 50px;
-                height: 50px;
-                -webkit-border-radius: 25px;
-                -moz-border-radius: 25px;
-                border-radius: 25px;
-                border: 1 px solid black;
-                background-color: transparent;
-
-                <div>
-                <svg width="600" height="400">
-                    <g></g>
-                </svg>
-                </div>
-                <button onclick="zoomIn()">Zoom in</button>
-                <button onclick="zoomOut()">Zoom out</button>
-                <button onclick="resetZoom()">Reset zoom</button>
-                <button onclick="panLeft()">Pan left</button>
-                <button onclick="panRight()">Pan right</button>
-                <button onclick="center()">Center</button>
-            }*/
-            
+           
+        
         </style>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="./CSS/styles.css">
         <script src="https://d3js.org/d3.v7.min.js"></script>
         <script src="js/main.js"></script>
     </head>
     <body>
-        <div class="Chart">
-            <h1 class="text-center">DV Project</h1>
-
-
-            <h3 class="text-center">Periphery Plot</h3>
-
-            <div id="detailView"></div> <!-- Detailed View -->
-
-            <button onclick="zoomIn(2)">Zoom in</button>
-            <button onclick="zoomIn(0.5)">Zoom out</button>
-            <button onclick="resetZoom()">Reset zoom</button>
-            <button onclick="pan(-50,0)">Pan left</button>
-            <button onclick="pan(50,0)">Pan right</button>
-            <button onclick="center()">Center</button>
+        <div class="container-fluid">
             
-            <!-- Mini Map -->
-            <div id="miniChartContainer">
             
-            <div id="myDataVis"></div>
+            <div class="row">
+              
+                <div class="col-lg-9" id="mainScreen">
+
+                    <h1 class="text-center">DV Project</h1>
+                    <h3 class="text-center">Periphery Plot</h3>
+
+
+                    <div id="detailView">
+                        
+                    </div> <!-- Detailed View -->
+                    <div id="contextView"></div>
+                    
+                </div><!-- This is the end of the "container" div -->
+
+                <div class="col-lg-3" id = "interface">
+
+                    <h3 class="text-center">Control Panel</h3>
+                            
+                    <label for="x-attribute-select">X Attribute:</label>
+                    <select id="x-attribute-select" class="form-control" onchange="init_graphs()">
+                        
+                    </select>
+                    
+                    <label for="y-attribute-select">Y Attribute:</label>
+                    <select id="y-attribute-select" class="form-control" onchange="init_graphs()">
+                        
+                    </select>
+                    
+                    <label for="color-select">Grouping:</label>
+                    <select id="color-select" class="form-control" onchange="init_graphs()">
+                        
+                    </select>
+
+                    <label for="zoomRange" class="form-label">Zoom</label>
+                    <input type="range" class="form-range" id="zoomRange">
+
+                    <label for="customRange2" class="form-label">Context Size</label>
+                    <input type="range" class="form-range" min="0" max="5" step="0.5" id="customRange2">
+
+                    <label for="customRange3" class="form-label">Context Resolution</label>
+                    <input type="range" class="form-range" min="0" max="5" step="0.5" id="customRange3">
+
+                    <br></br>
+
+
+                    <button onclick="zoomIn(2)">Zoom in</button>
+                    <button onclick="zoomIn(0.5)">Zoom out</button>
+                    <button onclick="resetZoom()">Reset zoom</button>
+                    <button onclick="pan(-50,0)">Pan left</button>
+                    <button onclick="pan(50,0)">Pan right</button>
+                    <button onclick="center()">Center</button>
+
+
+                    <!-- Mini Map -->
+                    <div id="miniChartContainer"></div>
                 
+                </div>  
             </div>
-        </div><!-- This is the end of the "container" div -->
-
+               
+        </div>
     </body>
 </html> 
