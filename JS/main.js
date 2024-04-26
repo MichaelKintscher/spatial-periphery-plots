@@ -8,6 +8,8 @@ let xAttribute ;
 let yAttribute;
 let colorAttribute;
 
+let minimap_xScale, minimap_yScale;
+
 const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -95,7 +97,7 @@ let zoom = d3.zoom()
 function initZoom() {
     d3.select('#detailView').selectAll("*")
         .call(zoom);
-    d3.select('#zoomRect').call(zoom);
+    d3.select('#miniChartContainer').call(zoom);
 }
 
 function handleZoom(e) {
@@ -103,7 +105,10 @@ function handleZoom(e) {
         .attr('transform', e.transform);
 
     d3.select('#zoomRect')
-    .attr('transform', e.transform);
+    //.call(zoom.scaleBy, 1.5)
+    .attr('transform', e.transform)
+    //.attr("transform", "translate(" + minimap_xScale(-e.transform.x) + "," + minimap_yScale(- e.transform.y)+ ")")
+    ;
 }
 
 function zoomIn(ratio) {
@@ -136,6 +141,8 @@ function pan(xp) {
     d3.select('#zoomRect')
     //.transition()
     .call(zoom.translateBy, (310/1200)*xp, 0);
+
+
 }
 
 function detailViewPlotter() {
@@ -296,11 +303,11 @@ function miniMapPlotter() {
 
         console.log(xMax);
 
-        xScale = d3.scaleLinear()
+        minimap_xScale = d3.scaleLinear()
                         .domain([xMin, xMax])
                         .range([0, width]);
 
-        yScale = d3.scaleLinear()
+        minimap_yScale = d3.scaleLinear()
                         .domain([yMin, yMax])
                         .range([height, 0]);
 
@@ -312,9 +319,9 @@ function miniMapPlotter() {
                                         .attr("class", "scatter-point")
                                         .attr("id", (d, i) => "point-" + i)
                                         .attr("cx", 
-                                        d => xScale(d[xAttribute]))
+                                        d => minimap_xScale(d[xAttribute]))
                                         .attr("cy", 
-                                        d => yScale(d[yAttribute]))
+                                        d => minimap_yScale(d[yAttribute]))
                                         .attr("r", 2)
                                         .style("fill", d => colorScale(d[colorAttribute]))
                                         .style('opacity', 0)
@@ -322,8 +329,8 @@ function miniMapPlotter() {
                                             .style('opacity', 1)),
 
                             update => update.call(update => update.transition().duration(1000)
-                            .attr("cx", d => xScale(d[xAttribute]))
-                            .attr("cy", d => yScale(d[yAttribute]))
+                            .attr("cx", d => minimap_xScale(d[xAttribute]))
+                            .attr("cy", d => minimap_yScale(d[yAttribute]))
                             .style("fill", '#000'))
                         
                         );
@@ -334,7 +341,7 @@ function miniMapPlotter() {
         svg.append("g")
             .attr("transform", "translate(0," + height + ")")
             .transition().duration(750)
-            .call(d3.axisBottom(xScale));
+            .call(d3.axisBottom(minimap_xScale));
 
         svg.append("text")
             .attr("class", "x-axis-title")
@@ -346,7 +353,7 @@ function miniMapPlotter() {
         // Add y-axis
         svg.append("g")
             .transition().duration(750)
-            .call(d3.axisLeft(yScale));
+            .call(d3.axisLeft(minimap_yScale));
 
         svg.append("text")
             .attr("class", "y-axis-title")
@@ -360,33 +367,31 @@ function miniMapPlotter() {
         
     });
 
-    svg.append('rect')
+    svg.append("circle")
+        .attr("cx", width / 2)
+        .attr("cy", height / 2)
         .attr("id", "zoomRect")
-        .attr('x', 0)
-        .attr('y', 0)
-        .attr('width', width)
-        .attr('height', height)
+        .attr("r", Math.min(width, height) / 2)
         .attr('stroke', 'black')
-        .attr('fill-opacity', 0.1)
-        .attr("clip-path", "url(#miniCircularMask)");
+        .attr('fill-opacity', 0.1);
 }
 
 function contextPlotter() {
     // set the dimensions and margins of the graph
 
-    var margin = {top: 10, right: 10, bottom: 10, left: 10},
-    width = 700-margin.left - margin.right,
-    height = 700 - margin.top - margin.bottom,
+    var margin = { top: 10, right: 60, bottom: 30, left: 60 },
+    width = 1200 - margin.left - margin.right,
+    height = 800 - margin.top - margin.bottom,
     innerRadius = 250,
     outerRadius = 300;   // the outerRadius goes from the middle of the SVG area to the border
 
     // append the svg object to the body of the page
-    var svg = d3.select("#contextView")
-    .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
+    var svg = d3.select("#detailView").select('svg')
+    //.append("svg")
+    //.attr("width", width + margin.left + margin.right)
+    //.attr("height", height + margin.top + margin.bottom)
     .append("g")
-    .attr("transform", "translate(" + width / 2 + "," + ( height/2+100 )+ ")"); // Add 100 on Y translation, cause upper bars are longer
+    .attr("transform", "translate(" + width / 2 + "," + ( height/2)+ ")"); // Add 100 on Y translation, cause upper bars are longer
 
     d3.csv('Data/test_data.csv').then(function(data) {
 
