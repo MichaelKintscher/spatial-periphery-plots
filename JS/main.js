@@ -1,6 +1,6 @@
 let focusX = 0; 
 let focusY = 0;
-let focusRadius = 250;
+let focusRadius = 300;
 
 dataset_path = 'Data/Pokemon.csv';
 
@@ -18,6 +18,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     
 });
+
+let pointData={} // Data of all the point in the svg.
+let contextData={} // Data of all points to be included in context view.
+var conRadRatio = 2 //context area radius ratio to focus are radius
+var contextResolution = 8 //Default context resolution
+var zoomCircleScale;
+var focusAttr;
+
+var zoomCircleAttr = {x:0, y:0, r:0};
 
 d3.select("#x-attribute-select").on("change", init_graphs);
 d3.select("#y-attribute-select").on("change", init_graphs);
@@ -104,19 +113,87 @@ function handleZoom(e) {
     d3.select('#detailView').select('g')
         .attr('transform', e.transform);
 
-    d3.select('#zoomRect')
-    //.call(zoom.scaleBy, 1.5)
-    .attr('transform', e.transform)
-    //.attr("transform", "translate(" + minimap_xScale(-e.transform.x) + "," + minimap_yScale(- e.transform.y)+ ")")
+    zoomCircleScale = 1 / e.transform.k;
+
+
+    const inverseTransform = new d3.ZoomTransform(
+        zoomCircleScale,
+        -e.transform.x * zoomCircleScale * 0.29,
+        -e.transform.y * zoomCircleScale * 0.30 //)0.28 is the ratio of heights of detailed and minimap
+    );
+
+    // zoomCircleAttr = {
+    //     x: focusAttr[0] - e.transform.x * zoomCircleScale * 0.29,
+    //     y: focusAttr[1] - e.transform.y * zoomCircleScale * 0.30,
+    //     r: focusAttr[2]*zoomCircleScale
+    // };
+
+    [zoomCircleAttr.x, zoomCircleAttr.y] = inverseTransform.apply(focusAttr.slice(0,2));
+    zoomCircleAttr.r = focusAttr[2]*zoomCircleScale;
+
+    d3.select('#zoomCircle')
+    .attr('transform', inverseTransform)
     ;
+
+    d3.select('#zoomContextCircle')
+    //.attr('transform', inverseTransform)
+    .attr('cx', zoomCircleAttr.x)
+    .attr('cy', zoomCircleAttr.y)
+    .attr('r', zoomCircleAttr.r*conRadRatio)
+    ;
+
+    d3.select('#zoomCircleCenter')
+    //.attr('transform', inverseTransform)
+    .attr('cx', zoomCircleAttr.x)
+    .attr('cy', zoomCircleAttr.y)
+    ;    
+
+    contextUpdate()
 }
+
+ function contextUpdate(){
+    function _angle(coord){ //gives the angle at which point is in context window, if its not then return -1
+        var dist = Math.hypot((coord[0]-zoomCircleAttr.x), (coord[1]-zoomCircleAttr.y))
+
+        if (dist>zoomCircleAttr.r && dist<(zoomCircleAttr.r*conRadRatio)){
+            var angle = Math.atan2(-(coord[1]-zoomCircleAttr.y), (coord[0]-zoomCircleAttr.x)) * (180/Math.PI);
+            return ~~((angle>0)? angle/(360/contextResolution) : (360+angle) / (360/contextResolution));
+        }
+
+        return false;
+    }
+
+    function _groupByValue(data) {
+        return Object.entries(data).reduce((result, [id, value]) => {
+            (result[value] = result[value] || []).push(id);
+            return result;
+        }, {});
+    }
+
+    
+    contextData = Object.fromEntries(
+        Object.entries(pointData)
+            .map(([id, coord]) => {
+                return [id, _angle(coord)];
+            })
+            .filter(([_, angle]) => angle !== false)
+    );
+
+    contextData = _groupByValue(contextData);
+    console.log(contextData)
+
+    d3.select("#detailView").select('svg').select('#contextGraph').remove()
+
+    contextPlotter();
+    
+ }
 
 function zoomIn(ratio) {
     d3.select('#detailView').selectAll("*")
         //.transition()
         .call(zoom.scaleBy, ratio);
 
-    d3.select('#zoomRect')
+    d3.select('#zoomCircle')
     //.transition()
     .call(zoom.scaleBy, 1/ratio);
 }
@@ -138,7 +215,7 @@ function pan(xp) {
         //.transition()
         .call(zoom.translateBy, xp, 0);
 
-    d3.select('#zoomRect')
+    d3.select('#zoomCircle')
     //.transition()
     .call(zoom.translateBy, (310/1200)*xp, 0);
 
@@ -148,7 +225,7 @@ function pan(xp) {
 function detailViewPlotter() {
     var margin = { top: 10, right: 60, bottom: 30, left: 60 },
         width = 1200 - margin.left - margin.right,
-        height = 800 - margin.top - margin.bottom;
+        height = 900 - margin.top - margin.bottom;
 
     var svgContainer = d3.select("#detailView");
 
@@ -162,10 +239,11 @@ function detailViewPlotter() {
     svg.append("circle")
         .attr("cx", width / 2)
         .attr("cy", height / 2)
-        .attr("r", 250) 
+        .attr("r", 300) 
         .attr("fill", "none")
         .attr("stroke", "black")
-        .attr("stroke-width", 2);
+        .attr("stroke-width", 2)
+        
 
     svg.append("rect")
         .attr("x", 0)
@@ -189,7 +267,7 @@ function detailViewPlotter() {
     mask.append("circle")
         .attr("cx", width / 2)
         .attr("cy", height / 2 )
-        .attr("r", 250)
+        .attr("r", 300)
         .attr("fill", "black");
 
     // Read the data
@@ -318,8 +396,9 @@ function miniMapPlotter() {
                             enter => enter.append("circle")
                                         .attr("class", "scatter-point")
                                         .attr("id", (d, i) => "point-" + i)
-                                        .attr("cx", 
-                                        d => minimap_xScale(d[xAttribute]))
+                                        .attr("cx", function(d) { 
+
+                                            return minimap_xScale(d[xAttribute]); })
                                         .attr("cy", 
                                         d => minimap_yScale(d[yAttribute]))
                                         .attr("r", 2)
@@ -335,7 +414,13 @@ function miniMapPlotter() {
                         
                         );
 
-        circles
+        console.log(circles)
+
+        //pointData = circles._groups[0].reduce((o, key) => ({ ...o, [key]: []}), {})
+
+        for (const key of circles) {
+            pointData[key.id] = [parseFloat(key.attributes.cx.value), parseFloat(key.attributes.cy.value)];
+        }
 
         // Add x-axis
         svg.append("g")
@@ -370,10 +455,29 @@ function miniMapPlotter() {
     svg.append("circle")
         .attr("cx", width / 2)
         .attr("cy", height / 2)
-        .attr("id", "zoomRect")
-        .attr("r", Math.min(width, height) / 2)
+        .attr("id", "zoomCircle")
+        .attr("r", focusRadius*0.29)
         .attr('stroke', 'black')
         .attr('fill-opacity', 0.1);
+
+    focusAttr = [parseFloat(d3.select('#zoomCircle').attr("cx")), parseFloat(d3.select('#zoomCircle').attr("cy")), d3.select('#zoomCircle').attr("r")];
+
+
+    svg.append("circle")
+        .attr("cx", width / 2)
+        .attr("cy", height / 2)
+        .attr("id", "zoomContextCircle")
+        .attr("r", focusRadius*0.29*conRadRatio)
+        .attr('stroke', 'red')
+        .attr('fill-opacity', 0.05);
+
+    svg.append("circle")
+        .attr("cx", width / 2)
+        .attr("cy", height / 2)
+        .attr("id", "zoomCircleCenter")
+        .attr("r", 1)
+        .attr('stroke', 'red')
+        .attr('fill-opacity', 0.05);
 }
 
 function contextPlotter() {
@@ -381,9 +485,9 @@ function contextPlotter() {
 
     var margin = { top: 10, right: 60, bottom: 30, left: 60 },
     width = 1200 - margin.left - margin.right,
-    height = 800 - margin.top - margin.bottom,
-    innerRadius = 250,
-    outerRadius = 300;   // the outerRadius goes from the middle of the SVG area to the border
+    height = 900 - margin.top - margin.bottom,
+    innerRadius = 300,
+    outerRadius = 350;   // the outerRadius goes from the middle of the SVG area to the border
 
     // append the svg object to the body of the page
     var svg = d3.select("#detailView").select('svg')
@@ -391,37 +495,45 @@ function contextPlotter() {
     //.attr("width", width + margin.left + margin.right)
     //.attr("height", height + margin.top + margin.bottom)
     .append("g")
+    .attr("id", "contextGraph")
     .attr("transform", "translate(" + width / 2 + "," + ( height/2)+ ")"); // Add 100 on Y translation, cause upper bars are longer
 
-    d3.csv('Data/test_data.csv').then(function(data) {
+    // Transform the data for D3
+    var vizData = Object.entries(contextData).map(([key, value]) => ({
+        sector: key,
+        value: value
+    }));
 
-        // X scale
-        var x = d3.scaleBand()
-        .range([0, 2 * Math.PI])    // X axis goes from 0 to 2pi = all around the circle. If I stop at 1Pi, it will be around a half circle
-        .align(0)                  // This does nothing ?
-        .domain( data.map(function(d) { return d.Country; }) ); // The domain of the X axis is the list of states.
+    vizData.columns = ['sector', 'value']
 
-        // Y scale
-        var y = d3.scaleRadial()
-        .range([innerRadius, outerRadius])   // Domain will be define later.
-        .domain([0, 10000]); // Domain of Y is from 0 to the max seen in the data
+    // X scale
+    var x = d3.scaleBand()
+    .range([0, 2 * Math.PI])    // X axis goes from 0 to 2pi = all around the circle. If I stop at 1Pi, it will be around a half circle
+    .align(0)                  // This does nothing ?
+    .domain( Array.from({length: contextResolution}, (_, i) => i.toString()) ); // The domain of the X axis is the list of states.
 
-        // Add bars
-        svg.append("g")
-        .selectAll("path")
-        .data(data)
-        .enter()
-        .append("path")
-        .attr("fill", "#69b3a2")
-        .attr("d", d3.arc()     // imagine your doing a part of a donut plot
-            .innerRadius(innerRadius)
-            .outerRadius(function(d) { return y(d['Value']); })
-            .startAngle(function(d) { return x(d.Country); })
-            .endAngle(function(d) { return x(d.Country) + x.bandwidth(); })
-            .padAngle(0.01)
-            .padRadius(innerRadius))
+    // Y scale
+    var y = d3.scaleRadial()
+    .range([innerRadius, outerRadius])   // Domain will be define later.
+    .domain([0, d3.max(vizData, d => d.value.length)]); // Domain of Y is from 0 to the max seen in the data
 
-    });
+    // Add bars
+    svg.append("g")
+    .selectAll("path")
+    .data(vizData)
+    .enter()
+    .append("path")
+    .attr("fill", "#69b3a2")
+    .attr("d", d3.arc()     // imagine your doing a part of a donut plot
+        .innerRadius(innerRadius)
+        .outerRadius(function(d) { 
+            return y(d.value.length); })
+        .startAngle(function(d) { return -x(d.sector) + Math.PI/2; })
+        .endAngle(function(d) { return -x(d.sector) - x.bandwidth()+ Math.PI/2; })
+        .padAngle(0.01)
+        .padRadius(innerRadius))
+
+    
 }
 
 
